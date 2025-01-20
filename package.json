@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "This is a learning project to develop my first REST API using Express.js. The goal is to understand the basic principles of RESTful APIs and how to manage them efficiently with Node.js.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "nodemon src/index.js"
   },
