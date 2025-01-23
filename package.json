@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "build": "node src/index.js",
     "dev": "nodemon src/index.js"
   },
   "repository": {
@@ -30,6 +31,7 @@
     "nodemon": "^3.1.9"
   },
   "dependencies": {
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
   }
 }
