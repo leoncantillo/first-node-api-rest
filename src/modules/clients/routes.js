@@ -1,6 +1,6 @@
 import express from 'express';
 import answers from '../../net/answers.js';
-import controller from './controller.js';
+import controller from './index.js';
 
 const router = express.Router();
 
