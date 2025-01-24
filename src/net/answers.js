@@ -6,8 +6,8 @@ export const answers = {
             body: message,
         });
     },
-    error: (req, res, message = 'Internal Error', status) => {
-        res.status(status || 500).send({
+    error: (req, res, message = 'Internal Error', status = 500) => {
+        res.status(status).send({
             error: true,
             status: status,
             body: message,
