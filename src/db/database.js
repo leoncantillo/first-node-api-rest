@@ -44,7 +44,7 @@ const database = {
                     return reject(error);
                 }
                 if (result.rows.length === 0) {
-                    reject(new Error(`No records found in table: ${table}`));
+                    return reject(new Error(`No records found in table: ${table}`));
                 }
                 resolve(result.rows);
             });
@@ -59,10 +59,10 @@ const database = {
             const query = `SELECT * FROM ${table} WHERE id=$1`;
             connection.query(query, [id], (error, result) => {
                 if (error) {
-                    reject(error);
+                    return reject(error);
                 }
                 if (result.rows.length === 0) {
-                    reject(new Error(`No record found in table: ${table}, with ID: ${id}`));
+                    return reject(new Error(`No record found in table: ${table}, with ID: ${id}`));
                 }
                 resolve(result.rows);
             });
@@ -81,28 +81,22 @@ const database = {
             return Promise.reject(new Error('Invalid data: object is empty'));
         }
 
-        if (!('id' in data) || data.id === null || data.id === undefined) {
-            return insert(table, data).catch((error) => {
-                return Promise.reject(error);
-            });
-        } else {
-            return update(table, data).catch((error) => {
-                return Promise.reject(error);
-            });
-        }
+        return (data.id == null ? insert : update)(table, data).catch((error) => {
+            return Promise.reject(error);
+        });
     },
     remove: (table, data) => {
         return new Promise((resolve, reject) => {
             if (!data) {
-                reject(new Error('Data is null or undefined'));
+                return reject(new Error('Data is null or undefined'));
             }
 
             if (typeof data !== 'object') {
-                reject(new Error('Invalid data: expected an object'));
+                return reject(new Error('Invalid data: expected an object'));
             }
 
             if (Object.keys(data).length === 0) {
-                reject(new Error('Invalid data: object is empty'));
+                return reject(new Error('Invalid data: object is empty'));
             }
 
             if (!data.id) {
@@ -112,10 +106,10 @@ const database = {
             const query = `DELETE FROM ${table} WHERE id=$1`;
             connection.query(query, [data.id], (error, result) => {
                 if (error) {
-                    reject(error);
+                    return reject(error);
                 }
                 if (result.rowCount === 0) {
-                    reject(new Error(`No record found in table: ${table}, with ID: ${data.id}`));
+                    return reject(new Error(`No record found in table: ${table}, with ID: ${data.id}`));
                 }
                 resolve({ message: 'Record deleted successfully', affectedRows: result.rowCount });
             });
@@ -126,15 +120,15 @@ const database = {
 function insert(table, data) {
     return new Promise((resolve, reject) => {
         if (!data) {
-            reject(new Error('Data is null or undefined'));
+            return reject(new Error('Data is null or undefined'));
         }
 
         if (typeof data !== 'object') {
-            reject(new Error('Invalid data: expected an object'));
+            return reject(new Error('Invalid data: expected an object'));
         }
 
         if (Object.keys(data).length === 0) {
-            reject(new Error('Invalid data: object is empty'));
+            return reject(new Error('Invalid data: object is empty'));
         }
 
         const columns = Object.keys(data).join(', ');
@@ -145,7 +139,7 @@ function insert(table, data) {
 
         connection.query(query, values, (error, result) => {
             if (error) {
-                reject(error);
+                return reject(error);
             }
             resolve({
                 message: 'Record inserted successfully',
@@ -158,15 +152,15 @@ function insert(table, data) {
 function update(table, data) {
     return new Promise((resolve, reject) => {
         if (!data) {
-            reject(new Error('Data is null or undefined'));
+            return reject(new Error('Data is null or undefined'));
         }
 
         if (typeof data !== 'object') {
-            reject(new Error('Invalid data: expected an object'));
+            return reject(new Error('Invalid data: expected an object'));
         }
 
         if (Object.keys(data).length === 0) {
-            reject(new Error('Invalid data: object is empty'));
+            return reject(new Error('Invalid data: object is empty'));
         }
 
         const fields = Object.keys(data)
@@ -179,9 +173,9 @@ function update(table, data) {
         const query = `UPDATE ${table} SET ${fields.join(', ')} WHERE id=$${fields.length + 1}`;
         connection.query(query, [...values, data.id], (error, result) => {
             if (error) {
-                reject(error);
+                return reject(error);
             } else if (result.rowCount === 0) {
-                reject(new Error(`No record found in table: ${table}, with ID: ${data.id}`));
+                return reject(new Error(`No record found in table: ${table}, with ID: ${data.id}`));
             }
             resolve({ message: 'Record updated successfully' });
         });
