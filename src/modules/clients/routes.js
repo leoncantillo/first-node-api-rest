@@ -31,8 +31,8 @@ async function one(req, res, next) {
 
 async function create(req, res, next) {
     await controller.create(req.body)
-        .then(() => {
-            answers.success(req, res, 'Item Successfully Created', 200);
+        .then((item) => {
+            answers.success(req, res, item, 200);
         })
         .catch((err) => {
             next(err);
